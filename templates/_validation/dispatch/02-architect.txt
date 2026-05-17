@@ -1,0 +1,42 @@
+# docs-team-flow — architect
+
+## Goal
+Decide the structure of docs/team-flow.md (table of contents, ordering, depth) and gather just enough evidence from existing project files to make the structure reflect reality. You design; the next role writes.
+
+## Context
+- Read first: .team/tasks/docs-team-flow/requirement-analyst.md
+- Project state to scan (Read tool only — do NOT modify):
+  - .team/roles/*.md (role contracts)
+  - .team/role-presets.json
+  - .team/file-ownership.json
+  - .team/current-goal.md
+  - .claude/skills/team-orchestration/SKILL.md and references/*.md
+  - .claude/commands/team-*.md
+  - scripts/team_*.sh
+- Audience anchor: a newcomer with no prior team-orchestration exposure.
+
+## Allowed scope
+- .team/tasks/docs-team-flow/architect.md (your report only)
+
+## Denied scope
+- docs/**             (the doc itself; researcher writes it)
+- src/**, tests/**
+- .team/roles/**, .team/file-ownership.json (read-only)
+- any other write target
+
+## Completion criteria
+- Proposed TOC for docs/team-flow.md (3–7 top-level sections, plus subsections only where necessary).
+- For each section: a single-line description of what it must cover.
+- Length target consistent with requirement-analyst's range (200–500 lines is the default).
+- At least one structural risk identified (e.g. "newcomers may confuse role-allow vs explicit-owner; mitigate by ordering ownership before roles in the doc").
+- No code or doc content written — structure only.
+
+## Required report
+Write to: .team/tasks/docs-team-flow/architect.md
+Use these exact sections:
+- 설계 판단 (proposed TOC + per-section purpose)
+- 위험 (structure choices with downsides + mitigation)
+- 수정 파일 (none — architect only proposes)
+- 검증 (how the next role will know they followed the structure)
+
+Then exit.

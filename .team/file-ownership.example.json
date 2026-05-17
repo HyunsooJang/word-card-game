@@ -1,0 +1,35 @@
+{
+  "default_role": "developer",
+  "owners": {
+    ".team/**": "lead",
+    "docs/**": "researcher",
+    "src/**": "developer",
+    "tests/**": "qa-reviewer"
+  },
+  "roles": {
+    "lead": {
+      "allow": [".team/**", "docs/**", "*.md"],
+      "deny": ["src/**", "tests/**"]
+    },
+    "requirement-analyst": {
+      "allow": ["docs/**", ".team/tasks/**", "templates/prompts/**"],
+      "deny": ["src/**", "tests/**"]
+    },
+    "architect": {
+      "allow": ["src/**", "docs/**", ".architecture/**", ".team/tasks/**"],
+      "deny": []
+    },
+    "researcher": {
+      "allow": ["docs/**", ".team/tasks/**"],
+      "deny": ["src/**", "tests/**"]
+    },
+    "developer": {
+      "allow": ["src/**", "tests/**", "templates/**"],
+      "deny": [".team/file-ownership.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    },
+    "qa-reviewer": {
+      "allow": ["tests/**", "docs/**", ".team/tasks/**"],
+      "deny": ["src/**"]
+    }
+  }
+}

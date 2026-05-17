@@ -1,0 +1,47 @@
+{
+  "default_role": "developer",
+  "owners": {
+    ".team/tasks/*/requirement-analyst.md": "requirement-analyst",
+    ".team/tasks/*/architect.md": "architect",
+    ".team/tasks/*/researcher.md": "researcher",
+    ".team/tasks/*/developer.md": "developer",
+    ".team/tasks/*/qa-reviewer.md": "qa-reviewer",
+    ".team/tasks/*/lead.md": "lead",
+    ".team/tasks/*/intake.md": "lead",
+    ".team/roles/**": "lead",
+    ".team/current-goal.md": "lead",
+    ".team/file-ownership.json": "lead",
+    ".team/team-config.json": "lead",
+    ".team/role-presets.json": "lead",
+    ".team/cmux-surfaces.json": "lead",
+    "docs/**": "researcher",
+    "src/**": "developer",
+    "tests/**": "qa-reviewer"
+  },
+  "roles": {
+    "lead": {
+      "allow": [".team/**", "docs/**", "*.md"],
+      "deny": ["src/**", "tests/**"]
+    },
+    "requirement-analyst": {
+      "allow": ["docs/**", ".team/tasks/**", "templates/prompts/**"],
+      "deny": ["src/**", "tests/**"]
+    },
+    "architect": {
+      "allow": ["src/**", "docs/**", ".architecture/**", ".team/tasks/**"],
+      "deny": []
+    },
+    "researcher": {
+      "allow": ["docs/**", ".team/tasks/**"],
+      "deny": ["src/**", "tests/**"]
+    },
+    "developer": {
+      "allow": ["src/**", "tests/**", "templates/**"],
+      "deny": [".team/file-ownership.json", "package-lock.json", "pnpm-lock.yaml", "yarn.lock"]
+    },
+    "qa-reviewer": {
+      "allow": ["tests/**", "docs/**", ".team/tasks/**"],
+      "deny": ["src/**"]
+    }
+  }
+}

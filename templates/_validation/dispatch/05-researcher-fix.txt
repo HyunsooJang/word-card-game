@@ -1,0 +1,55 @@
+# docs-team-flow — researcher (fix pass)
+
+## Goal
+Apply QA-required fixes to docs/team-flow.md and update the researcher report. This is a follow-up pass; the original requirements/architect/researcher contexts still apply.
+
+## Context
+- Original requirements: .team/tasks/docs-team-flow/requirement-analyst.md
+- Original architect TOC: .team/tasks/docs-team-flow/architect.md
+- Previous researcher report: .team/tasks/docs-team-flow/researcher.md
+- **QA findings (the source of fixes)**: .team/tasks/docs-team-flow/qa-reviewer.md
+- Approval status was: yes-with-fixes
+- The artifact to edit: docs/team-flow.md (already exists, 205 lines)
+
+## Required fixes (MUST — both must land)
+
+### Fix 1 — `/team-close` bare invocation is wrong
+- Location: docs/team-flow.md:189 (User intervenes escalation entry)
+- Current text: shows `/team-close` with no argument as the way to close panes during user intervention.
+- Truth: `scripts/team_close.sh:8-11` exits with code 2 if no args. The correct bare-style invocation for "close every pane" is `/team-close --all`.
+- Action: change the bare `/team-close` reference to `/team-close --all`.
+
+### Fix 2 — broken cross-directory markdown links
+- All markdown links pointing OUTSIDE docs/ are missing the `../` prefix needed for the file-relative renderer used by GitHub/most viewers.
+- Affected lines per QA: 34, 35, 48, 93, 110, 114, 116, 127, 175, 197–201, 205.
+- Action: for every link whose target starts with `.claude/`, `.team/`, `scripts/`, or any other top-level path other than `docs/`, prepend `../` to the link's href.
+- Example: `[.claude/commands/team-init.md](.claude/commands/team-init.md)` → `[.claude/commands/team-init.md](../.claude/commands/team-init.md)`
+- Do NOT change link display text, only the href. Verify by visual scan of every line containing a `](` substring.
+
+## Optional fixes (skip — not blocking)
+- QA Finding 3 (cheatsheet `--all` variant): leave as-is unless trivially expressible without growing the doc.
+- QA Finding 7 (word count 1248 vs 1100 ceiling): leave as-is. The 13% overage is acceptable per QA.
+
+## Allowed scope
+- docs/team-flow.md
+- .team/tasks/docs-team-flow/researcher.md   ← overwrite with fix-pass report
+
+## Denied scope
+- src/**, tests/**
+- .team/roles/**, .team/file-ownership.json
+- Any file outside the two allowed targets
+
+## Completion criteria
+- docs/team-flow.md:189 no longer instructs `/team-close` bare; uses `/team-close --all`.
+- Every cross-directory markdown link in docs/team-flow.md is `../`-prefixed. Manually verify by scanning every `](.claude/...)`, `](.team/...)`, `](scripts/...)` occurrence in the file.
+- The researcher report at .team/tasks/docs-team-flow/researcher.md is rewritten to reflect the fix-pass: the four sections still apply, and the report's 리스크 section explicitly notes which QA findings were addressed and which were intentionally left (the optionals).
+
+## Required report
+Write to: .team/tasks/docs-team-flow/researcher.md (overwrite)
+Use these exact sections:
+- 조사 범위 (now: applied QA fixes from .team/tasks/docs-team-flow/qa-reviewer.md)
+- 근거 파일 (qa-reviewer.md + the affected lines you actually edited)
+- 현재 동작 (one paragraph: doc now passes QA MUST items)
+- 리스크 (which optionals were left and why)
+
+Then exit.

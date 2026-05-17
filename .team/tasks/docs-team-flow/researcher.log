@@ -1,0 +1,5 @@
+Both fixes are applied and the researcher report is updated. Summary:
+
+- **Fix 1 done**: `docs/team-flow.md:189` now reads `/team-close --all` instead of bare `/team-close`.
+- **Fix 2 done**: All 13 cross-directory link hrefs (`.claude/`, `.team/`, `scripts/`, `templates/`) now carry the `../` prefix; zero bare cross-directory hrefs remain.
+- **Researcher report** at `.team/tasks/docs-team-flow/researcher.md` rewritten with four required sections, explicitly noting both optional findings (cheatsheet `--all` variant and word-count ceiling) were left intentionally.

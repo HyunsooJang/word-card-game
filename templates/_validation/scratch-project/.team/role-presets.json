@@ -1,0 +1,34 @@
+{
+  "roles": {
+    "lead": {
+      "preferred_skills": ["planning", "integration", "code-review"],
+      "workflow": "Decompose work, assign file ownership, collect reports, merge final result.",
+      "report_format": ["한 일", "변경 파일", "검증", "리스크", "다음 필요 결정"]
+    },
+    "requirement-analyst": {
+      "preferred_skills": ["requirements-analysis", "jira-triage"],
+      "workflow": "Convert tickets into implementation-ready requirements and ask 3-5 clarifying questions when needed.",
+      "report_format": ["요구사항 요약", "모호한 점", "질문", "구현 전제"]
+    },
+    "architect": {
+      "preferred_skills": ["architecture-review", "state-machine-review"],
+      "workflow": "Check state transitions, policy gates, dependency direction, data model impact, and migration risk.",
+      "report_format": ["설계 판단", "위험", "수정 파일", "검증"]
+    },
+    "researcher": {
+      "preferred_skills": ["code-search", "evidence-gathering"],
+      "workflow": "Read code, tests, docs, and artifacts. Report exact files and behavior. Avoid code edits.",
+      "report_format": ["조사 범위", "근거 파일", "현재 동작", "리스크"]
+    },
+    "developer": {
+      "preferred_skills": ["implementation", "focused-testing"],
+      "workflow": "Implement only Lead-assigned files and behavior. Run focused tests first.",
+      "report_format": ["한 일", "변경 파일", "검증", "리스크"]
+    },
+    "qa-reviewer": {
+      "preferred_skills": ["code-review", "test-design", "regression-analysis"],
+      "workflow": "Review behavior, test gaps, regression risks, and final approval packet completeness.",
+      "report_format": ["Findings", "Missing tests", "Regression risk", "Approval readiness"]
+    }
+  }
+}

@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Word Card Game</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="app-header">
+        <h1>Word Card Game</h1>
+        <p>단어를 읽고, 부모가 pass/fail을 선택해 주세요.</p>
+      </header>
+
+      <section id="setupView" class="view">
+        <section class="panel" aria-labelledby="setup-title">
+          <h2 id="setup-title">학습 설정</h2>
+          <label class="field">
+            <span>단어 목록 (줄바꿈 또는 쉼표로 입력)</span>
+            <textarea id="wordInput" rows="6" placeholder="cat&#10;dog&#10;apple"></textarea>
+          </label>
+          <p class="help">
+            기본은 <strong>short</strong>입니다. long 단어는 <code>cake|long</code>처럼 입력하세요.
+          </p>
+          <p class="help">
+            발음 제공자: <strong id="ttsProviderText">확인 중</strong>
+          </p>
+          <p class="help">
+            현재 음성: <strong id="ttsVoiceText">확인 중</strong>
+          </p>
+
+          <div class="row">
+            <label class="field field-small">
+              <span>카드 개수</span>
+              <input id="cardCountInput" type="number" min="1" max="20" value="6" />
+            </label>
+            <label class="field field-small">
+              <span>연습 모드</span>
+              <select id="vowelModeInput">
+                <option value="short" selected>short</option>
+                <option value="long">long</option>
+                <option value="all">all</option>
+              </select>
+            </label>
+            <label class="field field-small">
+              <span>시작 단계</span>
+              <select id="startPhaseInput">
+                <option value="reading" selected>reading</option>
+                <option value="hidden">hidden</option>
+                <option value="blank">blank</option>
+              </select>
+            </label>
+            <label class="field field-small">
+              <span>Blank 모드</span>
+              <select id="blankModeInput">
+                <option value="gap" selected>gap</option>
+                <option value="arrange">arrange</option>
+                <option value="typing">typing</option>
+              </select>
+            </label>
+
+            <div class="actions">
+              <button id="saveWordsBtn" class="secondary">목록 저장</button>
+              <button id="startBtn" class="primary">학습 시작</button>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section id="studyView" class="view hidden">
+        <section class="panel" aria-live="polite">
+          <div class="study-header">
+            <h2>학습 진행</h2>
+            <button id="goSetupBtn" class="secondary">설정으로 돌아가기</button>
+          </div>
+          <div class="stats">
+            <p>읽기 남은 단어: <strong id="remainingCount">0</strong></p>
+            <p>읽기 Pass: <strong id="passCount">0</strong></p>
+            <p>읽기 Fail: <strong id="failCount">0</strong></p>
+            <p>찾기 Pass: <strong id="hiddenPassCount">0</strong></p>
+            <p>찾기 Fail: <strong id="hiddenFailCount">0</strong></p>
+            <p>Blank Pass: <strong id="blankPassCount">0</strong></p>
+            <p>Blank Fail: <strong id="blankFailCount">0</strong></p>
+            <p>현재 단계: <strong id="phaseText">reading</strong></p>
+            <p>현재 모드: <strong id="currentMode">short</strong></p>
+          </div>
+
+          <p id="statusText" class="status">학습을 시작해 주세요.</p>
+
+          <div id="cards" class="cards" role="list"></div>
+
+          <div id="judgePanel" class="judge-panel hidden" aria-live="polite">
+            <p><strong id="selectedWordText"></strong> 을(를) 잘 읽었나요?</p>
+            <p class="blend-readout">
+              블렌딩:
+              <strong id="blendText">-</strong>
+            </p>
+            <div class="judge-actions">
+              <button id="listenBtn" class="secondary" disabled>발음 듣기</button>
+              <button id="failBtn" class="danger">Fail</button>
+              <button id="passBtn" class="success">Pass</button>
+            </div>
+          </div>
+
+          <div id="hiddenPanel" class="judge-panel hidden" aria-live="polite">
+            <p>숨은 단어 찾기</p>
+            <p>세 카드 중 정확한 철자를 골라보세요.</p>
+            <div id="hiddenOptions" class="hidden-options"></div>
+            <div id="hiddenFeedback" class="status"></div>
+            <div class="judge-actions">
+              <button id="hiddenListenBtn" class="secondary" disabled>발음 듣기</button>
+              <button id="hiddenHintBtn" class="secondary" disabled>힌트 보기</button>
+            </div>
+            <div id="hiddenHintBox" class="status"></div>
+          </div>
+
+          <div id="blankPanel" class="judge-panel hidden" aria-live="polite">
+            <p>빈칸 채우기</p>
+            <p>현재 Blank 모드: <strong id="blankModeText">gap</strong></p>
+            <p id="blankWordRow" class="blank-word hidden"><strong id="blankWordText">-</strong></p>
+            <div class="judge-actions">
+              <button id="blankListenBtn" class="secondary" disabled>발음 듣기</button>
+            </div>
+            <div id="blankGapSection">
+              <label class="field field-small">
+                <span>빈칸 글자 입력</span>
+                <input id="blankInput" type="text" maxlength="1" autocomplete="off" />
+              </label>
+              <div class="judge-actions">
+                <button id="checkBlankBtn" class="primary">정답 확인</button>
+              </div>
+            </div>
+            <div id="blankArrangeSection" class="hidden">
+              <p class="arrange-answer"><strong id="arrangeAnswerText">-</strong></p>
+              <div id="arrangeLetters" class="letter-grid"></div>
+              <div class="judge-actions">
+                <button id="arrangeResetBtn" class="secondary">다시</button>
+                <button id="checkArrangeBtn" class="primary">정답 확인</button>
+              </div>
+            </div>
+            <div id="blankTypingSection" class="hidden">
+              <label class="field field-small">
+                <span>단어 전체 입력</span>
+                <input id="typingInput" type="text" autocomplete="off" />
+              </label>
+              <div class="judge-actions">
+                <button id="checkTypingBtn" class="primary">정답 확인</button>
+              </div>
+            </div>
+            <p id="blankFeedback" class="status"></p>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script src="./app.js" defer></script>
+  </body>
+</html>

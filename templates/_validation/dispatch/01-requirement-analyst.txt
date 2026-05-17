@@ -1,0 +1,43 @@
+# docs-team-flow — requirement-analyst
+
+## Goal
+Convert "Add docs/team-flow.md describing the team workflow for newcomers" into an implementation-ready spec so a downstream architect/researcher can act without further clarification.
+
+## Context
+- This project uses a 6-role team-orchestration pattern (lead, requirement-analyst, architect, researcher, developer, qa-reviewer) with file-ownership enforcement via a PreToolUse hook.
+- The pattern has been extracted into a Claude Code plugin at templates/claude-team-plugin/. Phase 1 staging lives at .claude/skills/team-orchestration/, .claude/commands/team-*.md, and scripts/team_*.sh.
+- Goal of docs/team-flow.md: a newcomer should be able to read it and answer (a) how do I open a ticket, (b) which role does what, (c) where do reports land, (d) what triggers escalation.
+- Existing reference files for the doc to draw from later:
+  - .team/roles/*.md (role contracts)
+  - .team/role-presets.json (per-role report formats and preferred skills)
+  - .team/file-ownership.json (ownership rules)
+  - .claude/commands/team-*.md (slash command surface)
+  - scripts/team_*.sh (entry points)
+
+## Allowed scope
+- docs/**
+- .team/tasks/docs-team-flow/**
+
+## Denied scope
+- src/**
+- tests/**
+- .team/roles/**
+- .team/file-ownership.json
+- .claude/**
+
+## Completion criteria
+- Acceptance criteria for docs/team-flow.md are unambiguous (an architect could decide structure and a researcher could write the doc without re-asking).
+- Audience explicitly defined.
+- Required sections enumerated.
+- Out-of-scope topics explicitly listed (so the doc does not over-grow).
+- Length target stated as a range.
+
+## Required report
+Write to: .team/tasks/docs-team-flow/requirement-analyst.md
+Use these exact sections:
+- 요구사항 요약
+- 모호한 점
+- 질문 (only if any genuinely block the next stage; otherwise empty)
+- 구현 전제
+
+Then exit.

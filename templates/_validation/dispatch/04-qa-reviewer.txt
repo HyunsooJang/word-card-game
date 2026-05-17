@@ -1,0 +1,42 @@
+# docs-team-flow — qa-reviewer
+
+## Goal
+Verify docs/team-flow.md against requirements + architect structure, and surface gaps before lead integration.
+
+## Context
+- Inputs (read first, in order):
+  - .team/tasks/docs-team-flow/requirement-analyst.md
+  - .team/tasks/docs-team-flow/architect.md
+  - .team/tasks/docs-team-flow/researcher.md
+- Artifact under review: docs/team-flow.md
+- Cross-reference the doc against the truth files the researcher used:
+  - .team/roles/*.md
+  - .team/role-presets.json
+  - .team/file-ownership.json
+  - .claude/commands/team-*.md
+  - scripts/team_*.sh
+
+## Allowed scope
+- .team/tasks/docs-team-flow/qa-reviewer.md (your report only)
+
+## Denied scope
+- docs/**             (read-only; do not edit)
+- src/**, tests/**, .team/roles/**, .team/file-ownership.json
+- any other write target
+
+## Completion criteria
+- Every acceptance criterion from requirement-analyst.md is traced to a section in docs/team-flow.md OR flagged as missing with file:line.
+- Every section in the architect's TOC is present OR a skip justification exists in the doc itself.
+- No factual errors against the role contracts, ownership rules, or command behaviors. Cite file:line for every error you find.
+- Length within target range (200–500 lines).
+- Sample dispatch prompt in the doc, if present, has all 6 mandatory fields (Goal/Context/Allowed/Denied/Completion/Report).
+
+## Required report
+Write to: .team/tasks/docs-team-flow/qa-reviewer.md
+Use these exact sections:
+- Findings (numbered; each with file:line)
+- Missing tests (N/A unless examples should be runnable)
+- Regression risk (any wording that implies behavior NOT actually implemented)
+- Approval readiness: yes / no / yes-with-fixes <list>
+
+Then exit.

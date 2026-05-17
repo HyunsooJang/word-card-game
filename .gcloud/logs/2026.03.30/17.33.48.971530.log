@@ -1,0 +1,17 @@
+2026-03-30 17:33:48,972 DEBUG    root            Loaded Command Group: ['gcloud', 'auth']
+2026-03-30 17:33:48,972 DEBUG    root            Loaded Command Group: ['gcloud', 'auth', 'application_default']
+2026-03-30 17:33:48,983 DEBUG    root            Loaded Command Group: ['gcloud', 'auth', 'application-default', 'login']
+2026-03-30 17:33:48,984 DEBUG    root            Running [gcloud.auth.application-default.login] with arguments: [--disable-quota-project: "True", --no-launch-browser: "False"]
+2026-03-30 17:33:48,984 DEBUG    root            On GCE from disk cache: False
+2026-03-30 17:33:49,032 DEBUG    root            On GCE from memory cache: False
+2026-03-30 17:33:49,033 DEBUG    requests_oauthlib.oauth2_session Generated new state rjor3jOSCjBbKtMeQLB1mY8fhezwcf.
+2026-03-30 17:33:49,033 INFO     ___FILE_ONLY___ Go to the following link in your browser, and complete the sign-in prompts:
+
+    https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=764086051850-6qr4p6gpi6hn506pt8ejuq83di341hur.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Fsdk.cloud.google.com%2Fapplicationdefaultauthcode.html&scope=openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcloud-platform+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fsqlservice.login&state=rjor3jOSCjBbKtMeQLB1mY8fhezwcf&prompt=consent&token_usage=remote&access_type=offline&code_challenge=Ze4u0qn1_IgOrB_XJq7ve6EbHoJLmGDCuOYUbsOsTiI&code_challenge_method=S256
+
+
+2026-03-31 10:23:52,229 INFO     ___FILE_ONLY___ 
+
+Command killed by keyboard interrupt
+
+

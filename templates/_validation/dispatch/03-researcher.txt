@@ -1,0 +1,45 @@
+# docs-team-flow — researcher (writer pass)
+
+## Goal
+Write docs/team-flow.md per the approved requirements and architect structure. You are acting as the implementor for this doc-only ticket because docs/** is owned by researcher (developer cannot write here).
+
+## Context
+- Read first (in order):
+  - .team/tasks/docs-team-flow/requirement-analyst.md   ← what to cover
+  - .team/tasks/docs-team-flow/architect.md             ← TOC to follow
+- Reference truths to draw on (Read tool):
+  - .team/roles/*.md
+  - .team/role-presets.json
+  - .team/file-ownership.json
+  - .claude/skills/team-orchestration/SKILL.md and references/*.md
+  - .claude/commands/team-*.md
+  - scripts/team_*.sh
+- Audience: a newcomer joining the project with zero prior context.
+
+## Allowed scope
+- docs/team-flow.md                              ← the artifact
+- .team/tasks/docs-team-flow/researcher.md       ← your report
+
+## Denied scope
+- src/**, tests/**
+- .team/roles/**, .team/file-ownership.json
+- any .team/** path other than your report
+- any docs/** path other than docs/team-flow.md
+
+## Completion criteria
+- docs/team-flow.md exists.
+- Section order matches the architect's TOC. Skipped sections are explicitly noted with a one-line skip justification at the top of the doc.
+- Length within the requirement-analyst's target range (200–500 lines).
+- Includes at least one concrete sample dispatch prompt (you may reuse a real one from templates/_validation/dispatch/).
+- No fabricated commands, roles, or files — every reference traceable to an existing file.
+- Any time the doc names a file or command, prefer markdown links over bare names so newcomers can click through.
+
+## Required report
+Write to: .team/tasks/docs-team-flow/researcher.md
+Use these exact sections:
+- 조사 범위
+- 근거 파일 (which existing files informed the doc; with paths)
+- 현재 동작 (one paragraph: what a newcomer can now do after reading the doc)
+- 리스크 (any wording in the doc you are uncertain about)
+
+Then exit.

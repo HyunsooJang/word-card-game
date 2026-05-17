@@ -1,0 +1,20 @@
+{
+  "transport": "tmux",
+  "roles": [
+    "lead",
+    "requirement-analyst",
+    "architect",
+    "researcher",
+    "developer",
+    "qa-reviewer"
+  ],
+  "worktrees": {
+    "enabled": false,
+    "root": ".claude/worktrees",
+    "branch_prefix": "claude-team/"
+  },
+  "runtime": {
+    "root": ".team/runtime",
+    "per_role_env": true
+  }
+}

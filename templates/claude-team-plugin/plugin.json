@@ -1,0 +1,19 @@
+{
+  "name": "claude-team",
+  "version": "0.1.0",
+  "description": "Subagent + tmux hybrid team orchestration for Claude Code: requirement-analyst / architect / researcher / developer / qa-reviewer roles with file ownership enforcement, ephemeral worker spawning, and report-driven dispatch.",
+  "author": {
+    "name": "word-card-game team",
+    "email": "hyun8148.hsj@gmail.com"
+  },
+  "keywords": [
+    "team",
+    "orchestration",
+    "multi-agent",
+    "tmux",
+    "role-isolation",
+    "file-ownership"
+  ],
+  "homepage": "",
+  "repository": ""
+}
