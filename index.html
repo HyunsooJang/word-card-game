@@ -483,6 +483,15 @@ button:disabled {
   font-family: inherit;
 }
 
+.run-arrange-section {
+  display: grid;
+  gap: 10px;
+}
+
+.run-arrange-section.hidden {
+  display: none;
+}
+
 .run-ranking-list {
   margin: 10px 0 0;
   padding-left: 24px;
@@ -711,8 +720,14 @@ button:disabled {
               <button id="runListenBtn" class="secondary" disabled>발음 듣기</button>
             </div>
 
+            <div id="runArrangeSection" class="run-arrange-section hidden">
+              <p id="runArrangeAnswerText" class="arrange-answer">_</p>
+              <div id="runArrangeLetters" class="letter-grid"></div>
+              <button id="runArrangeResetBtn" class="secondary" type="button">다시 선택</button>
+            </div>
+
             <div class="run-controls">
-              <label class="field">
+              <label id="runAnswerField" class="field">
                 <span id="runAnswerLabel">정답 입력</span>
                 <input id="runAnswerInput" type="text" autocomplete="off" />
               </label>
@@ -834,6 +849,11 @@ const runWordIndexText = document.querySelector("#runWordIndexText");
 const runModeText = document.querySelector("#runModeText");
 const runPromptText = document.querySelector("#runPromptText");
 const runListenBtn = document.querySelector("#runListenBtn");
+const runArrangeSection = document.querySelector("#runArrangeSection");
+const runArrangeAnswerText = document.querySelector("#runArrangeAnswerText");
+const runArrangeLetters = document.querySelector("#runArrangeLetters");
+const runArrangeResetBtn = document.querySelector("#runArrangeResetBtn");
+const runAnswerField = document.querySelector("#runAnswerField");
 const runAnswerLabel = document.querySelector("#runAnswerLabel");
 const runAnswerInput = document.querySelector("#runAnswerInput");
 const runCheckAnswerBtn = document.querySelector("#runCheckAnswerBtn");
@@ -847,6 +867,8 @@ const RUN_OBSTACLE_SPEED = 360;
 const RUN_RUNNER_X = 42;
 const RUN_RUNNER_WIDTH = 48;
 const RUN_RUNNER_HEIGHT = 42;
+const RUN_WORD_GAP_MIN = 2;
+const RUN_WORD_GAP_MAX = 5;
 
 const state = {
   phase: "reading",
@@ -902,6 +924,8 @@ const runState = {
   obstacleWidth: 18,
   obstacleHeight: 42,
   obstaclesSinceWord: 0,
+  obstaclesBeforeNextWord: 3,
+  arrangeSelection: [],
 };
 
 function showSetupView() {
@@ -2007,6 +2031,18 @@ function updateRunStats() {
 
 function resetRunInputs() {
   runAnswerInput.value = "";
+  runState.arrangeSelection = [];
+  if (runState.current) {
+    runState.current.usedIndices = [];
+  }
+  runArrangeAnswerText.textContent = "_";
+  runArrangeLetters.innerHTML = "";
+  runArrangeSection.classList.add("hidden");
+  runAnswerField.classList.remove("hidden");
+  runAnswerInput.disabled = false;
+  runCheckAnswerBtn.classList.remove("hidden");
+  runCheckAnswerBtn.disabled = false;
+  runArrangeResetBtn.disabled = false;
 }
 
 function hideRunQuestionPanel() {
@@ -2041,10 +2077,14 @@ function getRunTrackWidth() {
   return Math.max(320, runTrack.clientWidth || 680);
 }
 
+function setNextRunWordGap() {
+  runState.obstaclesBeforeNextWord = randomInt(RUN_WORD_GAP_MIN, RUN_WORD_GAP_MAX);
+}
+
 function spawnRunObstacle(forceType = "") {
   const shouldSpawnWord =
     forceType === "card" ||
-    (!forceType && runState.pending.length > 0 && runState.obstaclesSinceWord >= 4);
+    (!forceType && runState.pending.length > 0 && runState.obstaclesSinceWord >= runState.obstaclesBeforeNextWord);
 
   runState.obstacleType = shouldSpawnWord ? "card" : "cactus";
   runState.obstacleWidth = shouldSpawnWord ? 72 : 22;
@@ -2055,6 +2095,7 @@ function spawnRunObstacle(forceType = "") {
   runObstacle.textContent = shouldSpawnWord ? "WORD" : "";
   if (shouldSpawnWord) {
     runState.obstaclesSinceWord = 0;
+    setNextRunWordGap();
   } else {
     runState.obstaclesSinceWord += 1;
   }
@@ -2156,16 +2197,59 @@ function renderRunQuestion() {
     runPromptText.textContent = runState.current.prompt;
     runAnswerLabel.textContent = "빈칸 글자 입력";
   } else if (runState.current.mode === "arrange") {
-    const letters = runState.current.letters.map((letter) => letter.char).join(" ");
-    runPromptText.textContent = `섞인 글자: ${letters}`;
-    runAnswerLabel.textContent = "단어 순서대로 입력";
+    runPromptText.textContent = "알파벳 카드를 순서대로 선택하세요.";
+    runAnswerField.classList.add("hidden");
+    runArrangeSection.classList.remove("hidden");
+    renderRunArrangeAnswer();
+    renderRunArrangeLetters();
   } else {
     runPromptText.textContent = runState.current.prompt;
     runAnswerLabel.textContent = "단어 전체 입력";
   }
 
   updateRunStats();
-  runAnswerInput.focus();
+  if (runState.current.mode === "arrange") {
+    runArrangeLetters.querySelector("button")?.focus();
+  } else {
+    runAnswerInput.focus();
+  }
+}
+
+function renderRunArrangeAnswer() {
+  if (!runState.current || runState.current.mode !== "arrange") return;
+  const wordLength = runState.current.entry.word.length;
+  const selected = runState.arrangeSelection.join(" ");
+  const placeholders = Array.from({ length: wordLength - runState.arrangeSelection.length }, () => "_").join(" ");
+  runArrangeAnswerText.textContent = [selected, placeholders].filter(Boolean).join(" ").trim() || "_";
+}
+
+function renderRunArrangeLetters() {
+  if (!runState.current || runState.current.mode !== "arrange") return;
+
+  runArrangeLetters.innerHTML = "";
+  runState.current.letters.forEach((letter, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "letter-chip";
+    button.textContent = letter.char;
+    button.disabled = runState.current.usedIndices.includes(index);
+    button.addEventListener("click", () => {
+      if (!runState.active || runState.current?.mode !== "arrange") return;
+      runState.current.usedIndices.push(index);
+      runState.arrangeSelection.push(letter.char);
+      renderRunArrangeAnswer();
+      renderRunArrangeLetters();
+    });
+    runArrangeLetters.append(button);
+  });
+}
+
+function resetRunArrangeAnswer() {
+  if (!runState.current || runState.current.mode !== "arrange") return;
+  runState.current.usedIndices = [];
+  runState.arrangeSelection = [];
+  renderRunArrangeAnswer();
+  renderRunArrangeLetters();
 }
 
 function nextRunTurn() {
@@ -2207,6 +2291,19 @@ function completeRunTurn(isPass, successText, failText) {
     runState.current = null;
     hideRunQuestionPanel();
     updateRunStats();
+
+    if (runState.pending.length === 0) {
+      if (runState.modeIndex >= runState.modeQueue.length - 1) {
+        completeRunGame();
+        return;
+      }
+
+      runState.modeIndex += 1;
+      runState.pending = shuffle(runState.source.map((entry) => ({ ...entry })));
+      runStatusText.textContent = `${successText} ${getBlankModeLabel(runState.modeQueue[runState.modeIndex])} 단계로 넘어갑니다.`;
+      updateRunStats();
+    }
+
     spawnRunObstacle("cactus");
     window.setTimeout(() => {
       if (!runState.active || runState.isQuestionOpen) return;
@@ -2216,8 +2313,13 @@ function completeRunTurn(isPass, successText, failText) {
     return;
   } else {
     runStatusText.textContent = `${failText} 정답을 맞춰야 계속 달릴 수 있어요.`;
-    resetRunInputs();
-    runAnswerInput.focus();
+    if (runState.current.mode === "arrange") {
+      resetRunArrangeAnswer();
+      runArrangeLetters.querySelector("button")?.focus();
+    } else {
+      resetRunInputs();
+      runAnswerInput.focus();
+    }
   }
 
   updateRunStats();
@@ -2225,14 +2327,32 @@ function completeRunTurn(isPass, successText, failText) {
 
 function checkRunAnswer() {
   if (!runState.active || !runState.current) return;
-  const typed = runAnswerInput.value.trim().toLowerCase().replace(/\s+/g, "");
-  if (!typed) {
-    runStatusText.textContent = runState.current.mode === "gap" ? "글자 1개를 입력해 주세요." : "정답을 입력해 주세요.";
+
+  if (runState.current.mode === "gap") {
+    const typed = runAnswerInput.value.trim().toLowerCase().replace(/\s+/g, "");
+    if (!typed) {
+      runStatusText.textContent = "글자 1개를 입력해 주세요.";
+      return;
+    }
+
+    completeRunTurn(typed[0] === runState.current.answer, "Pass! 다시 달립니다.", "Fail. 이 단어는 다시 나옵니다.");
     return;
   }
 
-  if (runState.current.mode === "gap") {
-    completeRunTurn(typed[0] === runState.current.answer, "Pass! 다시 달립니다.", "Fail. 이 단어는 다시 나옵니다.");
+  if (runState.current.mode === "arrange") {
+    const typed = runState.arrangeSelection.join("");
+    if (typed.length !== runState.current.entry.word.length) {
+      runStatusText.textContent = "모든 알파벳 카드를 순서대로 선택해 주세요.";
+      return;
+    }
+
+    completeRunTurn(typed === runState.current.entry.word, "Pass! 다음 단어로 달립니다.", "Fail. 순서를 다시 맞춰 보세요.");
+    return;
+  }
+
+  const typed = runAnswerInput.value.trim().toLowerCase().replace(/\s+/g, "");
+  if (!typed) {
+    runStatusText.textContent = "정답을 입력해 주세요.";
     return;
   }
 
@@ -2274,6 +2394,8 @@ function startRunGame() {
   runState.runnerY = 0;
   runState.runnerVelocity = 0;
   runState.obstaclesSinceWord = 0;
+  runState.arrangeSelection = [];
+  setNextRunWordGap();
 
   showRunView();
   renderRunRankings();
@@ -2307,6 +2429,11 @@ function completeRunGame() {
   showRunQuestionPanel();
   runStatusText.textContent = `완주! ${formatRunDuration(runState.elapsedMs)} 기록이 저장되었습니다.`;
   runPromptText.textContent = "FINISH";
+  runModeText.textContent = "완주";
+  runAnswerField.classList.add("hidden");
+  runArrangeSection.classList.add("hidden");
+  runCheckAnswerBtn.classList.add("hidden");
+  runCheckAnswerBtn.disabled = true;
 }
 
 function startRound() {
@@ -2425,6 +2552,7 @@ runListenBtn.addEventListener("click", () => {
   }
 });
 runCheckAnswerBtn.addEventListener("click", checkRunAnswer);
+runArrangeResetBtn.addEventListener("click", resetRunArrangeAnswer);
 runJumpBtn.addEventListener("click", jumpRunRunner);
 runRestartBtn.addEventListener("click", startRunGame);
 exitRunBtn.addEventListener("click", () => {
